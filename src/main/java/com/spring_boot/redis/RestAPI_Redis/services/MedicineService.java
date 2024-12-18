@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +27,7 @@ public class MedicineService {
         return medicine;
     }
     //get medicine by Id
-    public Medicine getMedicineById(int id){
+    public Medicine getMedicineById(String id){
         Object re=redisTemplate.opsForHash().get(KEY,id);
         return (Medicine) re;
     }
@@ -39,18 +38,18 @@ public class MedicineService {
         return values.stream().map(value->(Medicine)value).collect(Collectors.toList());
     }
     //delete medicine By Id
-    public void deleteMedicineById(int id){
+    public void deleteMedicineById(String id){
         redisTemplate.opsForHash().delete(KEY,id);
     }
     //update medicine by id.
-    public Medicine updateMedicineById(int id,Medicine updatedMedicine){
+    public Medicine updateMedicineById(String id,Medicine updatedMedicine){
         Medicine medicine=getMedicineById(id);
         if(medicine!=null){
             medicine.setName(updatedMedicine.getName());
             medicine.setCompanyName(updatedMedicine.getCompanyName());
             medicine.setExpiry(updatedMedicine.getExpiry());
             medicine.setCount(updatedMedicine.getCount());
-            save(medicine);
+            return save(medicine);
         }
         throw new RuntimeException("Not found medicine with id:"+id);
     }
